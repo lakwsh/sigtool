@@ -24,6 +24,12 @@ int main(void)
 #endif
     printf("[find_sig] ret=%p\n", find_sig(&info, (mem_sig_t *)&sig, true));
 
+#ifndef WIN32
+    mem_info self = {.name = ""};
+    find_base(&self);
+    printf("[get_sym] ret=%p\n", get_sym(self.addr, "main"));
+#endif
+
     mem_sig_t *org;
     uint8_t patch[] = "\x06\x01lakwsh";
     read_sig((uintptr_t)info.addr, (mem_sig_t *)&patch, org);

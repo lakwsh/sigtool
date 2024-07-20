@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <tlhelp32.h>
 #else
-#include <link.h> /* dl_phdr_info */
+#include <link.h> /* dl_iterate_phdr */
 #include <sys/mman.h>
 #endif
 #include "sigtool.h"
