@@ -55,7 +55,7 @@ bool find_base(mem_info *info)
     bool succ = false;
     MODULEENTRY32 me32 = {sizeof(MODULEENTRY32)}; /* dwSize */
     while (Module32Next(hModuleSnap, &me32)) {    /* srcds */
-        if (!stricmp((char *)me32.szModule, info->name)) {
+        if (!_stricmp((char *)me32.szModule, info->name)) {
             info->addr = (void *)me32.modBaseAddr;
             info->len = (size_t)me32.modBaseSize;
             succ = true;
