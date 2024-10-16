@@ -10,15 +10,15 @@
 
 uintptr_t get_sym(void *base, const char *symbol)
 {
-    if (!base || !symbol) return 0;
+    CHK_RET_V(!base || !symbol, 0);
 
 #ifdef WIN32
     return 0; /* not supported */
 #else
     Dl_info info;
-    if (!dladdr(base, &info)) return 0;
+    CHK_RET_V(!dladdr(base, &info), 0);
     int fd = open(info.dli_fname, O_RDONLY);
-    if (fd == -1) return 0;
+    CHK_RET_V(fd == -1, 0);
 
     off_t size = lseek(fd, 0, SEEK_END);
     if (size == -1) {
@@ -28,7 +28,7 @@ uintptr_t get_sym(void *base, const char *symbol)
 
     auto addr = (uintptr_t)mmap(NULL, (size_t)size, PROT_READ, MAP_PRIVATE, fd, 0);
     close(fd);
-    if ((void *)addr == MAP_FAILED) return 0;
+    CHK_RET_V((void *)addr == MAP_FAILED, 0);
 
     uintptr_t result = 0;
     auto elf_hdr = (Elf32_Ehdr *)addr;

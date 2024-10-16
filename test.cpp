@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <inttypes.h>
 #include "sigtool.h"
 
 int main(void)
@@ -9,12 +10,12 @@ int main(void)
     mem_info info = {.name = "libc.so"};
 #endif
     printf("[find_base] ret=%d ", find_base(&info));
-    printf("base=%p len=0x%x\n", info.addr, info.len);
+    printf("base=%p len=0x%" PRIxPTR "\n", info.addr, info.len);
 
 #ifdef WIN32
-    printf("[get_func] ret=%p\n", get_func(info.addr, "GetProcAddress"));
+    printf("[get_func] ret=0x%" PRIxPTR "\n", get_func(info.addr, "GetProcAddress"));
 #else
-    printf("[get_func] ret=%p\n", get_func(info.addr, "printf"));
+    printf("[get_func] ret=0x%" PRIxPTR "\n", get_func(info.addr, "printf"));
 #endif
 
 #ifdef WIN32
@@ -22,12 +23,12 @@ int main(void)
 #else
     uint8_t sig[] = "\x03\x00\x45\x4C\x46"; /* ELF */
 #endif
-    printf("[find_sig] ret=%p\n", find_sig(&info, (mem_sig_t *)&sig, true));
+    printf("[find_sig] ret=0x%" PRIxPTR "\n", find_sig(&info, (mem_sig_t *)&sig, true));
 
 #ifndef WIN32
     mem_info self = {.name = ""};
     find_base(&self);
-    printf("[get_sym] ret=%p\n", get_sym(self.addr, "main"));
+    printf("[get_sym] ret=0x%" PRIxPTR "\n", get_sym(self.addr, "main"));
 #endif
 
     mem_sig_t *org;

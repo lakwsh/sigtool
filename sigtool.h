@@ -4,6 +4,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define CHK_RET(cond)     \
+    do {                  \
+        if (cond) return; \
+    } while (0);
+#define CHK_RET_V(cond, val)  \
+    do {                      \
+        if (cond) return val; \
+    } while (0);
+
 typedef struct {
     const char *name;
     void *addr;

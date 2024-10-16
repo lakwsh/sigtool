@@ -10,10 +10,10 @@
 
 void read_sig(uintptr_t addr, mem_sig_t *new_sign, mem_sig_t *&org_sign)
 {
-    if (!addr || !new_sign) return;
+    CHK_RET(!addr || !new_sign);
 
     org_sign = (mem_sig_t *)malloc(sizeof(mem_sig_t) + new_sign->len);
-    if (!org_sign) return;
+    CHK_RET(!org_sign);
 
     org_sign->len = new_sign->len;
     org_sign->off = new_sign->off;
@@ -25,7 +25,7 @@ void read_sig(uintptr_t addr, mem_sig_t *new_sign, mem_sig_t *&org_sign)
 
 void write_sig(uintptr_t addr, mem_sig_t *sign)
 {
-    if (!addr || !sign) return;
+    CHK_RET(!addr || !sign);
 
     auto src = (void *)sign->sig;
     auto dst = (void *)(addr + sign->off);

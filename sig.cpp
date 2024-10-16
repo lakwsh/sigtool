@@ -10,7 +10,7 @@
 
 uintptr_t get_func(void *addr, const char *func)
 {
-    if (!addr || !func) return 0;
+    CHK_RET_V(!addr || !func, 0);
 
 #ifdef WIN32
     return (uintptr_t)GetProcAddress((HMODULE)addr, func);
@@ -33,7 +33,7 @@ uintptr_t get_func(void *addr, const char *func)
 static int callback(struct dl_phdr_info *info, size_t size, void *data)
 {
     mem_info *d = (mem_info *)data;
-    if (!info->dlpi_name || !strcasestr(info->dlpi_name, d->name)) return 0; /* path */
+    CHK_RET_V(!info->dlpi_name || !strcasestr(info->dlpi_name, d->name), 0); /* path */
 
     d->addr = (void *)info->dlpi_addr;
     d->len = info->dlpi_phdr[0].p_memsz;
@@ -43,14 +43,14 @@ static int callback(struct dl_phdr_info *info, size_t size, void *data)
 
 bool find_base(mem_info *info)
 {
-    if (!info) return false;
+    CHK_RET_V(!info, false);
 
     info->addr = NULL;
     info->len = 0;
 
 #ifdef WIN32
     HANDLE hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
-    if (hModuleSnap == INVALID_HANDLE_VALUE) return false;
+    CHK_RET_V(hModuleSnap == INVALID_HANDLE_VALUE, false);
 
     bool succ = false;
     MODULEENTRY32 me32 = {sizeof(MODULEENTRY32)}; /* dwSize */
@@ -72,7 +72,7 @@ bool find_base(mem_info *info)
 
 uintptr_t find_sig(const mem_info *base, const mem_sig_t *sign, bool pure)
 {
-    if (!base || !sign || !base->addr) return 0;
+    CHK_RET_V(!base || !sign || !base->addr, 0);
 
 #ifndef WIN32
     mlock(base->addr, base->len);
