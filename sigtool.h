@@ -25,14 +25,14 @@ typedef struct {
     uint8_t sig[];
 } mem_sig_t;
 
-uintptr_t get_func(void *addr, const char *func);
+uintptr_t get_func(const void *addr, const char *func);
 bool find_base(mem_info *info);
 uintptr_t find_sig(const mem_info *base, const mem_sig_t *sign, bool pure);
 
-uintptr_t get_sym(void *base, const char *sym);
+uintptr_t get_sym(const void *base, const char *sym);
 
-void read_sig(uintptr_t addr, mem_sig_t *new_sign, mem_sig_t *&org_sign);
-void write_sig(uintptr_t addr, mem_sig_t *sign);
-void free_sig(uintptr_t addr, mem_sig_t *&sign);
+void read_sig(const uintptr_t addr, const mem_sig_t *new_sign, mem_sig_t *&org_sign);
+void write_sig(const uintptr_t addr, const mem_sig_t *sign);
+void free_sig(const uintptr_t addr, mem_sig_t *&sign);
 
 #endif  // SIGNATURE_H

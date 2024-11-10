@@ -8,7 +8,7 @@
 #endif
 #include "sigtool.h"
 
-uintptr_t get_func(void *addr, const char *func)
+uintptr_t get_func(const void *addr, const char *func)
 {
     CHK_RET_V(!addr || !func, 0);
 
@@ -32,7 +32,7 @@ uintptr_t get_func(void *addr, const char *func)
 #ifndef WIN32
 static int callback(struct dl_phdr_info *info, size_t size, void *data)
 {
-    mem_info *d = (mem_info *)data;
+    auto d = (mem_info *)data;
     CHK_RET_V(!info->dlpi_name || !strcasestr(info->dlpi_name, d->name), 0); /* path */
 
     d->addr = (void *)info->dlpi_addr;

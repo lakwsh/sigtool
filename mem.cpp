@@ -8,7 +8,7 @@
 #endif
 #include "sigtool.h"
 
-void read_sig(uintptr_t addr, mem_sig_t *new_sign, mem_sig_t *&org_sign)
+void read_sig(const uintptr_t addr, const mem_sig_t *new_sign, mem_sig_t *&org_sign)
 {
     CHK_RET(!addr || !new_sign);
 
@@ -23,7 +23,7 @@ void read_sig(uintptr_t addr, mem_sig_t *new_sign, mem_sig_t *&org_sign)
     (void)memcpy(dst, src, org_sign->len);
 }
 
-void write_sig(uintptr_t addr, mem_sig_t *sign)
+void write_sig(const uintptr_t addr, const mem_sig_t *sign)
 {
     CHK_RET(!addr || !sign);
 
@@ -34,10 +34,10 @@ void write_sig(uintptr_t addr, mem_sig_t *sign)
     DWORD old;
     VirtualProtect(dst, sign->len, PAGE_EXECUTE_READWRITE, &old);
 #else
-    auto pa_addr = (void *)((uintptr_t)dst & ~(sysconf(_SC_PAGESIZE) - 1));
-    size_t size = (uintptr_t)dst - (uintptr_t)pa_addr + sign->len;
-    mlock(pa_addr, size);
-    mprotect(pa_addr, size, PROT_READ | PROT_WRITE | PROT_EXEC);
+    auto pg_addr = (void *)((uintptr_t)dst & ~(sysconf(_SC_PAGESIZE) - 1));
+    auto size = (size_t)((uintptr_t)dst - (uintptr_t)pg_addr + sign->len);
+    mlock(pg_addr, size);
+    mprotect(pg_addr, size, PROT_READ | PROT_WRITE | PROT_EXEC);
 #endif
 
     (void)memcpy(dst, src, sign->len);
@@ -45,12 +45,12 @@ void write_sig(uintptr_t addr, mem_sig_t *sign)
 #ifdef WIN32
     VirtualProtect(dst, sign->len, old, &old);
 #else
-    //mprotect(pa_addr, size, PROT_READ | PROT_EXEC); /* restore */
-    munlock(pa_addr, size);
+    // mprotect(pg_addr, size, PROT_READ | PROT_EXEC); /* restore */
+    munlock(pg_addr, size);
 #endif
 }
 
-void free_sig(uintptr_t addr, mem_sig_t *&sign)
+void free_sig(const uintptr_t addr, mem_sig_t *&sign)
 {
     write_sig(addr, sign);
     free((void *)sign);

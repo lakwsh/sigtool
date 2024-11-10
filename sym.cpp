@@ -8,7 +8,7 @@
 #endif
 #include "sigtool.h"
 
-uintptr_t get_sym(void *base, const char *symbol)
+uintptr_t get_sym(const void *base, const char *symbol)
 {
     CHK_RET_V(!base || !symbol, 0);
 
