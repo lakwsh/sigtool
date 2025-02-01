@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#ifdef WIN32
+#ifdef _WINDOWS
 #include <windows.h>
 #else
 #include <sys/mman.h> /* PROT */
@@ -30,7 +30,7 @@ void write_sig(const uintptr_t addr, const mem_sig_t *sign)
     auto src = (void *)sign->sig;
     auto dst = (void *)(addr + sign->off);
 
-#ifdef WIN32
+#ifdef _WINDOWS
     DWORD old;
     VirtualProtect(dst, sign->len, PAGE_EXECUTE_READWRITE, &old);
 #else
@@ -42,7 +42,7 @@ void write_sig(const uintptr_t addr, const mem_sig_t *sign)
 
     (void)memcpy(dst, src, sign->len);
 
-#ifdef WIN32
+#ifdef _WINDOWS
     VirtualProtect(dst, sign->len, old, &old);
 #else
     // mprotect(pg_addr, size, PROT_READ | PROT_EXEC); /* restore */

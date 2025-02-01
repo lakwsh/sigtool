@@ -4,7 +4,7 @@
 
 int main(void)
 {
-#ifdef WIN32
+#ifdef _WINDOWS
     mem_info info = {.name = "kernel32.dll"};
 #else
     mem_info info = {.name = "libc.so"};
@@ -12,20 +12,20 @@ int main(void)
     printf("[find_base] ret=%d ", find_base(&info));
     printf("base=%p len=0x%" PRIxPTR "\n", info.addr, info.len);
 
-#ifdef WIN32
+#ifdef _WINDOWS
     printf("[get_func] ret=0x%" PRIxPTR "\n", get_func(info.addr, "GetProcAddress"));
 #else
     printf("[get_func] ret=0x%" PRIxPTR "\n", get_func(info.addr, "printf"));
 #endif
 
-#ifdef WIN32
+#ifdef _WINDOWS
     uint8_t sig[] = "\x02\x00\x4D\x5A"; /* MZ */
 #else
     uint8_t sig[] = "\x03\x00\x45\x4C\x46"; /* ELF */
 #endif
     printf("[find_sig] ret=0x%" PRIxPTR "\n", find_sig(&info, (mem_sig_t *)&sig, true));
 
-#ifndef WIN32
+#ifndef _WINDOWS
     mem_info self = {.name = ""};
     find_base(&self);
     printf("[get_sym] ret=0x%" PRIxPTR "\n", get_sym(self.addr, "main"));

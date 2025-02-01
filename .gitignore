@@ -1,0 +1,8 @@
+/.vs
+/build
+/CMakeCache.txt
+/CMakeFiles
+/build.ninja
+/cmake_install.cmake
+/Makefile
+/sigtool

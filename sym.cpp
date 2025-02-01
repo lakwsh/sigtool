@@ -1,4 +1,4 @@
-#ifndef WIN32
+#ifndef _WINDOWS
 #include <dlfcn.h> /* dladdr */
 #include <elf.h>
 #include <fcntl.h> /* open */
@@ -12,7 +12,7 @@ uintptr_t get_sym(const void *base, const char *symbol)
 {
     CHK_RET_V(!base || !symbol, 0);
 
-#ifdef WIN32
+#ifdef _WINDOWS
     return 0; /* not supported */
 #else
     Dl_info info;

@@ -1,5 +1,5 @@
 #include <string.h>
-#ifdef WIN32
+#ifdef _WINDOWS
 #include <windows.h>
 #include <tlhelp32.h>
 #else
@@ -12,7 +12,7 @@ uintptr_t get_func(const void *addr, const char *func)
 {
     CHK_RET_V(!addr || !func, 0);
 
-#ifdef WIN32
+#ifdef _WINDOWS
     return (uintptr_t)GetProcAddress((HMODULE)addr, func);
 #else
     uintptr_t ptr = 0;
@@ -29,7 +29,7 @@ uintptr_t get_func(const void *addr, const char *func)
 #endif
 }
 
-#ifndef WIN32
+#ifndef _WINDOWS
 static int callback(struct dl_phdr_info *info, size_t size, void *data)
 {
     auto d = (mem_info *)data;
@@ -48,7 +48,7 @@ bool find_base(mem_info *info)
     info->addr = NULL;
     info->len = 0;
 
-#ifdef WIN32
+#ifdef _WINDOWS
     HANDLE hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0);
     CHK_RET_V(hModuleSnap == INVALID_HANDLE_VALUE, false);
 
@@ -74,7 +74,7 @@ uintptr_t find_sig(const mem_info *base, const mem_sig_t *sign, bool pure)
 {
     CHK_RET_V(!base || !sign || !base->addr, 0);
 
-#ifndef WIN32
+#ifndef _WINDOWS
     mlock(base->addr, base->len);
 #endif
 
@@ -98,7 +98,7 @@ uintptr_t find_sig(const mem_info *base, const mem_sig_t *sign, bool pure)
         p++;
     }
 
-#ifndef WIN32
+#ifndef _WINDOWS
     munlock(base->addr, base->len);
 #endif
 
