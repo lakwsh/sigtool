@@ -31,6 +31,7 @@ uintptr_t find_sig(const mem_info *base, const mem_sig_t *sign, bool pure);
 
 uintptr_t get_sym(const void *base, const char *sym);
 
+bool check_addr(const uintptr_t addr);
 void read_sig(const uintptr_t addr, const mem_sig_t *new_sign, mem_sig_t *&org_sign);
 void write_sig(const uintptr_t addr, const mem_sig_t *sign);
 void free_sig(const uintptr_t addr, mem_sig_t *&sign);

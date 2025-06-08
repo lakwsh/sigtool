@@ -4,9 +4,24 @@
 #include <windows.h>
 #else
 #include <sys/mman.h> /* PROT */
+#include <sys/uio.h>  /* process_vm_readv */
 #include <unistd.h>   /* sysconf */
 #endif
 #include "sigtool.h"
+
+bool check_addr(const uintptr_t addr)
+{
+#ifdef _WINDOWS
+    MEMORY_BASIC_INFORMATION mbi;
+    if (!VirtualQuery((void *)addr, &mbi, sizeof(mbi))) return false;
+    return (mbi.State == MEM_COMMIT) && !(mbi.Protect & (PAGE_GUARD | PAGE_NOACCESS));
+#else
+    char tmp;
+    struct iovec liov = {(void *)&tmp, 1};
+    struct iovec riov = {(void *)addr, 1};
+    return process_vm_readv(getpid(), &liov, 1, &riov, 1, 0) == 1;
+#endif
+}
 
 void read_sig(const uintptr_t addr, const mem_sig_t *new_sign, mem_sig_t *&org_sign)
 {

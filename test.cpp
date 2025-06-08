@@ -31,6 +31,9 @@ int main(void)
     printf("[get_sym] ret=0x%" PRIxPTR "\n", get_sym(self.addr, "main"));
 #endif
 
+    printf("[check_addr] addr=0 ret=%d\n", check_addr(0));
+    printf("[check_addr] addr=%p ret=%d\n", &info, check_addr((uintptr_t)&info));
+
     mem_sig_t *org;
     uint8_t patch[] = "\x06\x01lakwsh";
     read_sig((uintptr_t)info.addr, (mem_sig_t *)&patch, org);
